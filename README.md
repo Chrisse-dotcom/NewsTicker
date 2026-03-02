@@ -1,0 +1,2 @@
+# NewsTicker
+aktueller News Ticker
