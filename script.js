@@ -150,6 +150,8 @@ const INITIAL_NEWS = [
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'newsticker_iran_2026';
+const STORAGE_VERSION = '3'; // Erhöhen wenn INITIAL_NEWS sich ändert
+const VERSION_KEY = 'newsticker_version';
 let newsItems = [];
 let activeFilter = 'alle';
 let editingId = null;
@@ -157,8 +159,10 @@ let editingId = null;
 // ─── Persistence ─────────────────────────────────────────────────────────────
 function loadNews() {
   try {
+    const storedVersion = localStorage.getItem(VERSION_KEY);
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
+
+    if (stored && storedVersion === STORAGE_VERSION) {
       newsItems = JSON.parse(stored);
       // Merge in any new INITIAL_NEWS items not yet in storage
       const storedIds = new Set(newsItems.map(n => n.id));
@@ -168,7 +172,15 @@ function loadNews() {
         saveNews();
       }
     } else {
-      newsItems = INITIAL_NEWS.map(n => ({ ...n }));
+      // Version veraltet oder kein Eintrag: Nutzer-Meldungen behalten, INITIAL_NEWS neu laden
+      let userItems = [];
+      if (stored && storedVersion !== STORAGE_VERSION) {
+        const oldItems = JSON.parse(stored);
+        const initialIds = new Set(INITIAL_NEWS.map(n => n.id));
+        // Nur manuell hinzugefügte Meldungen (IDs > max INITIAL_NEWS ID) behalten
+        userItems = oldItems.filter(n => !initialIds.has(n.id));
+      }
+      newsItems = [...INITIAL_NEWS.map(n => ({ ...n })), ...userItems];
       saveNews();
     }
   } catch (_) {
@@ -179,6 +191,7 @@ function loadNews() {
 function saveNews() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newsItems));
+    localStorage.setItem(VERSION_KEY, STORAGE_VERSION);
   } catch (_) { /* quota exceeded – ignore */ }
 }
 
