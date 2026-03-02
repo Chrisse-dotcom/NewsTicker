@@ -92,6 +92,60 @@ const INITIAL_NEWS = [
     source: 'Pravda DE / CNBC',
     ts: Date.now() - 1000 * 60 * 60 * 6,
   },
+  {
+    id: 11,
+    headline: '🔴 Straße von Hormus gesperrt – globale Öl- und Gaslieferungen unterbrochen',
+    body: 'Der Iran hat die Straße von Hormus blockiert. Durch diese strategisch wichtige Meerenge fließen rund 20 % des weltweiten Öl- und Gashandels. Öl- und Gasmärkte reagieren mit massiven Preissteigerungen. Die EU hat einen Energie-Krisenstab einberufen.',
+    category: 'wirtschaft',
+    priority: 'breaking',
+    source: 'CBS News / EU-Kommission',
+    ts: Date.now() - 1000 * 60 * 60 * 5,
+  },
+  {
+    id: 12,
+    headline: 'Chameneis Ehefrau erliegt ihren Verletzungen',
+    body: 'Mansoureh Khojasteh Bagherzadeh (79), Ehefrau des getöteten Ajatollah Chamenei, ist nach Angaben der iranischen Nachrichtenagentur Tasnim ihren Verletzungen erlegen. Bereits beim ersten Angriff wurden Tochter, Schwiegersohn und ein Enkelkind getötet.',
+    category: 'politik',
+    priority: 'hoch',
+    source: 'Tasnim / t-online',
+    ts: Date.now() - 1000 * 60 * 60 * 4,
+  },
+  {
+    id: 13,
+    headline: '🔴 Kuwait schießt versehentlich drei US-amerikanische F-15E ab',
+    body: 'Während iranischer Angriffe schoss Kuwait versehentlich drei US-amerikanische F-15E Strike Eagles ab. US Central Command bestätigte: Alle sechs Piloten konnten sich katapultieren und befinden sich in stabilem Zustand.',
+    category: 'militär',
+    priority: 'breaking',
+    source: 'CBS News / US Central Command',
+    ts: Date.now() - 1000 * 60 * 60 * 3,
+  },
+  {
+    id: 14,
+    headline: 'Vierter US-Soldat gefallen – Trump kündigt Vergeltung an',
+    body: 'Das US-Militär bestätigte den Tod eines vierten amerikanischen Soldaten seit Beginn der Operation. Trump erklärte, er werde die Tode „rächen". Der Präsident rechnet mit weiteren US-Opfern und kündigte an, Angriffe könnten noch vier bis fünf Wochen andauern.',
+    category: 'militär',
+    priority: 'breaking',
+    source: 'NPR / CNBC',
+    ts: Date.now() - 1000 * 60 * 60 * 2,
+  },
+  {
+    id: 15,
+    headline: 'Hisbollah feuert Raketen auf Israel – israelische Gegenschläge im Libanon',
+    body: 'Am 2. März startete die Hisbollah erneut Raketenangriffe auf Israel und brach damit den Waffenstillstand von 2024. Israel antwortete sofort mit Luftangriffen auf Stellungen im Libanon. Der Konflikt weitet sich damit auf eine zweite Front aus.',
+    category: 'militär',
+    priority: 'breaking',
+    source: 'CNN / Al Jazeera',
+    ts: Date.now() - 1000 * 60 * 60 * 1,
+  },
+  {
+    id: 16,
+    headline: 'US-Kongress berät Kriegsvollmachten-Resolution gegen Trump',
+    body: 'Senator Tim Kaine (D-VA) bezeichnete den Angriff auf Iran als „illegalen Krieg" und brachte eine War Powers Resolution ein. Diese würde Trump zwingen, die Militäroperation einzustellen. Ein Veto des Präsidenten gilt als sicher – die Debatte belastet Trumps Rückhalt im Kongress.',
+    category: 'politik',
+    priority: 'hoch',
+    source: 'PBS News / CBS News',
+    ts: Date.now() - 1000 * 60 * 30,
+  },
 ];
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -106,6 +160,13 @@ function loadNews() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       newsItems = JSON.parse(stored);
+      // Merge in any new INITIAL_NEWS items not yet in storage
+      const storedIds = new Set(newsItems.map(n => n.id));
+      const newItems = INITIAL_NEWS.filter(n => !storedIds.has(n.id));
+      if (newItems.length > 0) {
+        newsItems = newsItems.concat(newItems.map(n => ({ ...n })));
+        saveNews();
+      }
     } else {
       newsItems = INITIAL_NEWS.map(n => ({ ...n }));
       saveNews();
