@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <title>Iran Krise – Newsticker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-title">NEWSTICKER</span>
+        <span class="brand-sub">Iran Krise</span>
+      </div>
+      <div class="header-right">
+        <span id="live-clock" class="live-clock"></span>
+        <button class="btn-toggle-admin" id="toggleAdmin" title="Meldungen verwalten">&#9998;</button>
+      </div>
+    </div>
+    <!-- Scrolling ticker bar -->
+    <div class="ticker-bar" aria-label="Aktuelle Schlagzeilen">
+      <span class="ticker-label">LIVE</span>
+      <div class="ticker-track-wrapper">
+        <div class="ticker-track" id="tickerTrack"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin panel -->
+  <section class="admin-panel" id="adminPanel" aria-hidden="true">
+    <div class="admin-inner">
+      <h2 class="admin-title">Meldung hinzufügen / bearbeiten</h2>
+      <form id="newsForm">
+        <input type="hidden" id="editId" value="" />
+        <div class="form-row">
+          <label for="newsHeadline">Schlagzeile *</label>
+          <input type="text" id="newsHeadline" placeholder="z.B. Trump droht mit Bodentruppen" required />
+        </div>
+        <div class="form-row">
+          <label for="newsBody">Details</label>
+          <textarea id="newsBody" rows="3" placeholder="Weitere Informationen zur Meldung …"></textarea>
+        </div>
+        <div class="form-row form-row--two">
+          <div>
+            <label for="newsCategory">Kategorie</label>
+            <select id="newsCategory">
+              <option value="militär">Militär</option>
+              <option value="politik">Politik</option>
+              <option value="diplomatie">Diplomatie</option>
+              <option value="wirtschaft">Wirtschaft</option>
+              <option value="humanitär">Humanitär</option>
+              <option value="sonstiges">Sonstiges</option>
+            </select>
+          </div>
+          <div>
+            <label for="newsPriority">Priorität</label>
+            <select id="newsPriority">
+              <option value="breaking">🔴 Breaking</option>
+              <option value="hoch" selected>🟠 Hoch</option>
+              <option value="normal">🟡 Normal</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="newsSource">Quelle</label>
+          <input type="text" id="newsSource" placeholder="z.B. ZDF heute, Reuters" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Speichern</button>
+          <button type="button" class="btn btn--secondary" id="cancelEdit">Abbrechen</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <span id="statsTotal">0 Meldungen</span>
+      <span class="stats-sep">|</span>
+      <span id="statsBreaking">0 Breaking</span>
+      <span class="stats-sep">|</span>
+      <span id="statsUpdated">Aktualisiert: –</span>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar" role="group" aria-label="Filter">
+      <button class="filter-btn active" data-filter="alle">Alle</button>
+      <button class="filter-btn" data-filter="breaking">Breaking</button>
+      <button class="filter-btn" data-filter="militär">Militär</button>
+      <button class="filter-btn" data-filter="politik">Politik</button>
+      <button class="filter-btn" data-filter="diplomatie">Diplomatie</button>
+      <button class="filter-btn" data-filter="wirtschaft">Wirtschaft</button>
+      <button class="filter-btn" data-filter="humanitär">Humanitär</button>
+    </div>
+
+    <!-- News cards -->
+    <div class="news-list" id="newsList" role="list"></div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState" hidden>
+      <p>Keine Meldungen für diesen Filter.</p>
+    </div>
+  </main>
+
+  <!-- Floating refresh button (mobile) -->
+  <button class="fab-refresh" id="fabRefresh" title="Anzeige aktualisieren">&#8635;</button>
+
+  <footer class="site-footer">
+    <p>Daten werden lokal gespeichert &middot; Stand: <span id="footerDate"></span></p>
+    <p class="footer-sources">
+      Quellen:
+      <a href="https://www.zdfheute.de/politik/ausland/iran-israel-usa-angriff-liveblog-100.html" target="_blank" rel="noopener">ZDF heute</a> &middot;
+      <a href="https://www.t-online.de/nachrichten/ausland/krisen/id_101150312/iran-krieg-aktuell-usa-haben-wohl-kontrolle-ueber-luftraum-erlangt.html" target="_blank" rel="noopener">t-online</a> &middot;
+      <a href="https://www.aljazeera.com/news/liveblog/2026/2/28/live-israel-launches-attacks-on-iran-multiple-explosions-heard-in-tehran" target="_blank" rel="noopener">Al Jazeera</a> &middot;
+      <a href="https://www.euronews.com/2026/03/02/war-widens-as-israel-us-strike-iran-and-clash-with-hezbollah" target="_blank" rel="noopener">Euronews</a> &middot;
+      <a href="https://www.bloomberg.com/news/articles/2026-03-02/iran-weitet-vergeltung-im-nahen-osten-aus-markte-unter-druck" target="_blank" rel="noopener">Bloomberg</a>
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
