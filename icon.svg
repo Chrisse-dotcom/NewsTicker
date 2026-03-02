@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
+  <defs>
+    <clipPath id="roundedSquare">
+      <rect width="1024" height="1024" rx="200" ry="200"/>
+    </clipPath>
+
+    <!-- Background: green top-left fading to dark red (Iranian flag theme) -->
+    <radialGradient id="bgGrad" cx="28%" cy="22%" r="85%">
+      <stop offset="0%"   stop-color="#1a6b3c"/>
+      <stop offset="42%"  stop-color="#8f2510"/>
+      <stop offset="100%" stop-color="#5a0505"/>
+    </radialGradient>
+
+    <!-- Subtle globe glow -->
+    <radialGradient id="globeGlow" cx="48%" cy="44%" r="52%">
+      <stop offset="0%"   stop-color="rgba(210,235,190,0.18)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+
+    <!-- Top-left corner light -->
+    <radialGradient id="cornerLight" cx="0%" cy="0%" r="70%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,0.10)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <g clip-path="url(#roundedSquare)">
+
+    <!-- ── Background ── -->
+    <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+    <rect width="1024" height="1024" fill="url(#cornerLight)"/>
+
+    <!-- ── Globe outline ── -->
+    <circle cx="510" cy="430" r="395"
+            fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="2.5"/>
+
+    <!-- Globe latitude rings (ellipses) -->
+    <ellipse cx="510" cy="220" rx="215"  ry="38"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+    <ellipse cx="510" cy="330" rx="358"  ry="56"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+    <ellipse cx="510" cy="430" rx="395"  ry="65"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+    <ellipse cx="510" cy="530" rx="360"  ry="56"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+    <ellipse cx="510" cy="625" rx="248"  ry="38"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+
+    <!-- Globe longitude arcs (vertical ellipses) -->
+    <ellipse cx="510" cy="430" rx="42"   ry="395"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+    <ellipse cx="510" cy="430" rx="155"  ry="395"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+    <ellipse cx="510" cy="430" rx="275"  ry="395"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+    <ellipse cx="510" cy="430" rx="368"  ry="395"
+             fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+
+    <!-- Glow overlay on globe -->
+    <circle cx="510" cy="430" r="395" fill="url(#globeGlow)"/>
+
+    <!-- ── Iran silhouette (simplified but recognisable) ── -->
+    <!--
+      Iran is roughly hexagonal. Key landmarks:
+        NW: Turkey/Armenia/Azerbaijan corner (narrow)
+        N:  Caspian Sea coast (slightly recessed from top)
+        NE: Turkmenistan border
+        E:  Afghanistan/Pakistan
+        SE: Makran coast → Hormuz peninsula
+        S/SW: Persian Gulf coast → Iraq/Kuwait border
+        W:  Iraq border going north back to NW
+    -->
+    <path d="
+      M 222,318
+      C 232,295 248,272 268,258
+      L 298,244 318,238
+      C 340,232 362,228 385,226
+      L 438,224 498,222 552,226
+      C 590,230 622,242 648,262
+      L 685,294 712,336 730,382
+      C 738,408 742,436 738,462
+      L 726,510 710,548
+      C 698,572 682,590 662,600
+      L 632,612 608,616 584,610
+      C 566,604 554,596 545,586
+      L 534,570
+      C 520,578 506,585 490,586
+      L 462,580
+      C 438,572 418,555 402,534
+      L 380,504 352,470
+      C 328,444 306,418 285,392
+      L 256,358
+      Z
+    "
+    fill="white" fill-opacity="0.90"
+    stroke="rgba(255,255,255,0.25)" stroke-width="3"/>
+
+    <!-- ── Speech / news bubble (top-left) ── -->
+    <rect x="100" y="110" width="195" height="148" rx="22" ry="22"
+          fill="white" fill-opacity="0.94"/>
+    <!-- Tail of bubble pointing down-right -->
+    <polygon points="138,258 175,258 152,298" fill="white" fill-opacity="0.94"/>
+    <!-- Text lines inside bubble -->
+    <rect x="128" y="140" width="135" height="13" rx="6"
+          fill="#b0b0b0"/>
+    <rect x="128" y="163" width="110" height="13" rx="6"
+          fill="#c0c0c0"/>
+    <rect x="128" y="186" width="122" height="13" rx="6"
+          fill="#c0c0c0"/>
+    <rect x="128" y="209" width="88"  height="13" rx="6"
+          fill="#d0d0d0"/>
+    <!-- Red dot (live/breaking indicator) -->
+    <circle cx="138" cy="233" r="9" fill="#e53e3e"/>
+    <rect   x="153"  y="227" width="68" height="11" rx="5"
+            fill="#e0e0e0"/>
+
+    <!-- ── Warning triangle (top-right) ── -->
+    <!-- Outer shadow triangle -->
+    <polygon points="824,118 944,326 704,326"
+             fill="rgba(0,0,0,0.30)"/>
+    <!-- Dark red base -->
+    <polygon points="820,122 938,322 702,322"
+             fill="#b71c1c"/>
+    <!-- Bright red face -->
+    <polygon points="820,134 926,314 714,314"
+             fill="#e53e3e"/>
+    <!-- Highlight edge -->
+    <line x1="820" y1="134" x2="714" y2="314"
+          stroke="rgba(255,120,80,0.45)" stroke-width="3"/>
+    <!-- Exclamation mark -->
+    <rect x="808" y="174" width="24" height="82" rx="12"
+          fill="white"/>
+    <circle cx="820" cy="297" r="13" fill="white"/>
+
+    <!-- ── Breaking News banner (bottom, Iranian flag stripe order) ── -->
+    <!-- Green stripe -->
+    <rect x="0" y="706" width="1024" height="88" fill="#1b7a38"/>
+    <!-- White stripe with text -->
+    <rect x="0" y="794" width="1024" height="88" fill="#f5f5f5"/>
+    <!-- Red stripe -->
+    <rect x="0" y="882" width="1024" height="142" fill="#c62828"/>
+
+    <!-- Dark overlay to make text readable -->
+    <rect x="0" y="706" width="1024" height="318" fill="rgba(0,0,0,0.18)"/>
+
+    <!-- BREAKING text (green area) -->
+    <text x="512" y="770"
+          font-family="Arial Black, Impact, sans-serif"
+          font-size="62" font-weight="900"
+          fill="white" text-anchor="middle"
+          letter-spacing="6">BREAKING</text>
+
+    <!-- NEWS text (white area) -->
+    <text x="512" y="858"
+          font-family="Arial Black, Impact, sans-serif"
+          font-size="62" font-weight="900"
+          fill="#1a1a1a" text-anchor="middle"
+          letter-spacing="10">NEWS</text>
+
+    <!-- Decorative dots row across red stripe (flag texture reference) -->
+    <g fill="rgba(255,255,255,0.55)">
+      <circle cx="312" cy="916" r="7"/>
+      <circle cx="340" cy="916" r="7"/>
+      <circle cx="368" cy="916" r="7"/>
+      <circle cx="396" cy="916" r="7"/>
+      <circle cx="424" cy="916" r="7"/>
+      <circle cx="452" cy="916" r="7"/>
+      <circle cx="480" cy="916" r="7"/>
+      <circle cx="508" cy="916" r="7"/>
+      <circle cx="536" cy="916" r="7"/>
+      <circle cx="564" cy="916" r="7"/>
+      <circle cx="592" cy="916" r="7"/>
+      <circle cx="620" cy="916" r="7"/>
+      <circle cx="648" cy="916" r="7"/>
+      <circle cx="676" cy="916" r="7"/>
+      <circle cx="704" cy="916" r="7"/>
+    </g>
+
+    <!-- Slight vignette on edges -->
+    <rect width="1024" height="1024" rx="200"
+          fill="none"
+          stroke="rgba(0,0,0,0.4)" stroke-width="40"/>
+
+  </g>
+</svg>
