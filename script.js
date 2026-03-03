@@ -411,11 +411,8 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 // Fetch-Button in der Stats-Bar
 document.getElementById('btnFetch').addEventListener('click', () => fetchAndMergeNews());
 
-// FAB "+ Neue Meldung" → öffnet Eingabeformular
-document.getElementById('fabAdd').addEventListener('click', () => {
-  resetForm();
-  openAdmin();
-});
+// FAB → Nachrichten aktualisieren
+document.getElementById('fabAdd').addEventListener('click', () => fetchAndMergeNews());
 
 // "Alle löschen" im Admin-Panel
 document.getElementById('clearAll').addEventListener('click', () => {
@@ -446,7 +443,7 @@ const IRAN_KW = [
   'epische wut', 'epic wrath',
 ];
 
-const CORS_PROXY   = 'https://api.allorigins.win/raw?url=';
+const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const FETCH_EVERY  = 10 * 60 * 1000;    // alle 10 Minuten
 const AUTO_MAX_AGE = 72 * 3600 * 1000;  // 72 Stunden vorhalten
 
@@ -475,28 +472,26 @@ function guessPriority(txt) {
 function setFetchStatus(msg, spin = false) {
   document.getElementById('fetchStatus').textContent = msg;
   document.getElementById('btnFetch').classList.toggle('spinning', spin);
+  document.getElementById('fabAdd').classList.toggle('spinning', spin);
 }
 
 async function fetchOneFeed(feed) {
-  const res = await fetch(CORS_PROXY + encodeURIComponent(feed.url), { cache: 'no-store' });
+  const res = await fetch(RSS2JSON_API + encodeURIComponent(feed.url), { cache: 'no-store' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await res.text();
-  const xml  = new DOMParser().parseFromString(text, 'text/xml');
-  if (xml.querySelector('parsererror')) throw new Error('XML-Fehler');
+  const data = await res.json();
+  if (data.status !== 'ok') throw new Error(data.message || 'Feed-Fehler');
 
-  return [...xml.querySelectorAll('item')].map(item => {
-    const headline = (item.querySelector('title')?.textContent || '').trim();
-    const body     = (item.querySelector('description')?.textContent || '')
+  return (data.items || []).map(item => {
+    const headline = (item.title || '').trim();
+    const body     = (item.description || item.content || '')
       .replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 350);
-    const pubDate  = item.querySelector('pubDate')?.textContent?.trim() || '';
-    const link     = (item.querySelector('link')?.textContent ||
-                      item.querySelector('guid')?.textContent || '').trim();
+    const link     = (item.link || '').trim();
 
     if (!headline) return null;
     const combined = (headline + ' ' + body).toLowerCase();
     if (!IRAN_KW.some(kw => combined.includes(kw))) return null;
 
-    const ts = pubDate ? new Date(pubDate).getTime() : Date.now();
+    const ts = item.pubDate ? new Date(item.pubDate).getTime() : Date.now();
     if (isNaN(ts) || Date.now() - ts > AUTO_MAX_AGE) return null;
 
     return {
@@ -535,7 +530,14 @@ async function fetchAndMergeNews() {
   }
 
   const t = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  setFetchStatus(newItems.length > 0 ? `+${newItems.length} neu · ${t}` : `Aktuell · ${t}`, false);
+  const failed = results.filter(r => r.status === 'rejected').length;
+  if (failed === AUTO_FEEDS.length) {
+    setFetchStatus(`⚠ Verbindung fehlgeschlagen · ${t}`, false);
+  } else if (newItems.length > 0) {
+    setFetchStatus(`+${newItems.length} neu · ${t}`, false);
+  } else {
+    setFetchStatus(`Aktuell · ${t}`, false);
+  }
   setTimeout(() => setFetchStatus(''), 12000);
 }
 
