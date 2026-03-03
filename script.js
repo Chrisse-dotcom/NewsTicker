@@ -406,12 +406,20 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
-// FAB refresh
-document.getElementById('fabRefresh').addEventListener('click', () => {
-  const fab = document.getElementById('fabRefresh');
-  fab.classList.add('spinning');
-  setTimeout(() => fab.classList.remove('spinning'), 650);
-  render();
+// FAB "+ Neue Meldung" → öffnet Eingabeformular
+document.getElementById('fabAdd').addEventListener('click', () => {
+  resetForm();
+  openAdmin();
+});
+
+// "Alle löschen" im Admin-Panel
+document.getElementById('clearAll').addEventListener('click', () => {
+  if (confirm('Wirklich ALLE Meldungen löschen?')) {
+    newsItems = [];
+    saveNews();
+    render();
+    closeAdmin();
+  }
 });
 
 // ─── Init ─────────────────────────────────────────────────────────────────────

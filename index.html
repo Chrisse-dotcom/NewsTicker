@@ -28,7 +28,7 @@
       </div>
       <div class="header-right">
         <span id="live-clock" class="live-clock"></span>
-        <button class="btn-toggle-admin" id="toggleAdmin" title="Meldungen verwalten">&#9998;</button>
+        <button class="btn-toggle-admin" id="toggleAdmin" title="Meldungen verwalten">&#9998; Verwalten</button>
       </div>
     </div>
     <!-- Scrolling ticker bar -->
@@ -82,6 +82,7 @@
         <div class="form-actions">
           <button type="submit" class="btn btn--primary">Speichern</button>
           <button type="button" class="btn btn--secondary" id="cancelEdit">Abbrechen</button>
+          <button type="button" class="btn btn--danger" id="clearAll">Alle löschen</button>
         </div>
       </form>
     </div>
@@ -118,8 +119,11 @@
     </div>
   </main>
 
-  <!-- Floating refresh button (mobile) -->
-  <button class="fab-refresh" id="fabRefresh" title="Anzeige aktualisieren">&#8635;</button>
+  <!-- Floating "Neue Meldung" button -->
+  <button class="fab-add" id="fabAdd" title="Neue Meldung hinzufügen">
+    <span class="fab-add-icon">+</span>
+    <span class="fab-add-label">Meldung</span>
+  </button>
 
   <footer class="site-footer">
     <p>Daten werden lokal gespeichert &middot; Stand: <span id="footerDate"></span></p>
