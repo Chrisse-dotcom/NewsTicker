@@ -428,33 +428,50 @@ a:hover { text-decoration: underline; }
   font-size: .9rem;
 }
 
-/* ===== FAB Refresh ===== */
-.fab-refresh {
+/* ===== FAB "Neue Meldung" ===== */
+.fab-add {
   position: fixed;
   bottom: 24px;
   right: 20px;
-  width: 52px;
   height: 52px;
-  border-radius: 50%;
+  padding: 0 20px;
+  border-radius: 26px;
   background: var(--accent);
   color: #fff;
   border: none;
-  font-size: 1.4rem;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(229,62,62,.5);
-  transition: transform .2s, opacity .2s;
+  box-shadow: 0 4px 20px rgba(229,62,62,.55);
+  transition: transform .2s, box-shadow .2s;
   z-index: 200;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
 }
-.fab-refresh:hover { transform: scale(1.1); }
-.fab-refresh:active { transform: scale(.95); }
-.fab-refresh.spinning { animation: spin .6s linear; }
+.fab-add:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(229,62,62,.7); }
+.fab-add:active { transform: scale(.97); }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+.fab-add-icon {
+  font-size: 1.6rem;
+  font-weight: 300;
+  line-height: 1;
+}
+.fab-add-label {
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* ===== Button danger ===== */
+.btn--danger {
+  background: transparent;
+  border: 1px solid rgba(229,62,62,.4);
+  color: var(--accent);
+  margin-left: auto;
+}
+.btn--danger:hover {
+  background: rgba(229,62,62,.12);
+  border-color: var(--accent);
 }
 
 /* ===== Footer ===== */
