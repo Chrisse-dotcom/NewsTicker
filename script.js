@@ -244,8 +244,9 @@ function renderCards() {
   empty.hidden = true;
 
   list.innerHTML = items.map(n => `
-    <article class="news-card" data-id="${n.id}" data-priority="${escapeHtml(n.priority)}" role="listitem">
+    <article class="news-card${n.autoFetched ? ' auto-fetched' : ''}" data-id="${n.id}" data-priority="${escapeHtml(n.priority)}" role="listitem">
       <div class="card-meta">
+        ${n.autoFetched ? '<span class="badge-auto">RSS</span>' : ''}
         <span class="badge-priority badge-priority--${escapeHtml(n.priority)}">${priorityLabel(n.priority)}</span>
         <span class="badge-category">${escapeHtml(n.category)}</span>
         ${n.source ? `<span class="card-source">${escapeHtml(n.source)}</span>` : ''}
@@ -254,6 +255,7 @@ function renderCards() {
       <h2 class="card-headline">${escapeHtml(n.headline)}</h2>
       ${n.body ? `<p class="card-body">${escapeHtml(n.body)}</p>` : ''}
       <div class="card-actions">
+        ${n.link ? `<a class="card-btn source-link" href="${escapeHtml(n.link)}" target="_blank" rel="noopener">&#x1F517; Quelle</a>` : ''}
         <button class="card-btn edit"   data-id="${n.id}">&#9998; Bearbeiten</button>
         <button class="card-btn delete" data-id="${n.id}">&#x1F5D1; Löschen</button>
       </div>
@@ -406,6 +408,9 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
+// Fetch-Button in der Stats-Bar
+document.getElementById('btnFetch').addEventListener('click', () => fetchAndMergeNews());
+
 // FAB "+ Neue Meldung" → öffnet Eingabeformular
 document.getElementById('fabAdd').addEventListener('click', () => {
   resetForm();
@@ -422,14 +427,127 @@ document.getElementById('clearAll').addEventListener('click', () => {
   }
 });
 
+// ─── Auto-Fetch RSS ───────────────────────────────────────────────────────────
+const AUTO_FEEDS = [
+  { name: 'Al Jazeera',  url: 'https://www.aljazeera.com/xml/rss/all.xml' },
+  { name: 'Tagesschau',  url: 'https://www.tagesschau.de/xml/rss2' },
+  { name: 'ZDF heute',   url: 'https://www.zdf.de/rss/zdf/nachrichten' },
+  { name: 'DW',          url: 'https://rss.dw.com/xml/rss-de-all' },
+  { name: 'Euronews DE', url: 'https://feeds.feedburner.com/euronews/de/news/' },
+];
+
+const IRAN_KW = [
+  'iran', 'irans', 'iranisch', 'iranian',
+  'chamenei', 'khamenei',
+  'teheran', 'tehran',
+  'hisbollah', 'hezbollah',
+  'hormus', 'hormuz',
+  'irgc', 'nahost', 'nahostkrieg',
+  'epische wut', 'epic wrath',
+];
+
+const CORS_PROXY   = 'https://api.allorigins.win/raw?url=';
+const FETCH_EVERY  = 10 * 60 * 1000;    // alle 10 Minuten
+const AUTO_MAX_AGE = 72 * 3600 * 1000;  // 72 Stunden vorhalten
+
+function guessCategory(txt) {
+  const t = txt.toLowerCase();
+  if (['angriff', 'rakete', 'militär', 'soldat', 'armee', 'luftwaffe', 'bomben',
+       'strike', 'attack', 'military', 'troops', 'war', 'drone', 'drohne', 'krieg'].some(k => t.includes(k))) return 'militär';
+  if (['wirtschaft', 'öl', 'gas', 'markt', 'preis', 'energie',
+       'oil', 'economy', 'market', 'barrel', 'dollar'].some(k => t.includes(k))) return 'wirtschaft';
+  if (['diplomatie', 'botschaft', 'sanktion', 'verhandlung',
+       'embassy', 'sanction', 'talks'].some(k => t.includes(k))) return 'diplomatie';
+  if (['flüchtling', 'humanitär', 'zivilist', 'hilfe',
+       'humanitarian', 'civilian', 'refugee'].some(k => t.includes(k))) return 'humanitär';
+  return 'politik';
+}
+
+function guessPriority(txt) {
+  const t = txt.toLowerCase();
+  if (['eilmeldung', 'breaking', 'getötet', 'killed', 'explosion',
+       'gesperrt', 'blockiert'].some(k => t.includes(k))) return 'breaking';
+  if (['krieg', 'war', 'rakete', 'missile', 'eskalation', 'escalation',
+       'bomben', 'bombs'].some(k => t.includes(k))) return 'hoch';
+  return 'normal';
+}
+
+function setFetchStatus(msg, spin = false) {
+  document.getElementById('fetchStatus').textContent = msg;
+  document.getElementById('btnFetch').classList.toggle('spinning', spin);
+}
+
+async function fetchOneFeed(feed) {
+  const res = await fetch(CORS_PROXY + encodeURIComponent(feed.url), { cache: 'no-store' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  const xml  = new DOMParser().parseFromString(text, 'text/xml');
+  if (xml.querySelector('parsererror')) throw new Error('XML-Fehler');
+
+  return [...xml.querySelectorAll('item')].map(item => {
+    const headline = (item.querySelector('title')?.textContent || '').trim();
+    const body     = (item.querySelector('description')?.textContent || '')
+      .replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 350);
+    const pubDate  = item.querySelector('pubDate')?.textContent?.trim() || '';
+    const link     = (item.querySelector('link')?.textContent ||
+                      item.querySelector('guid')?.textContent || '').trim();
+
+    if (!headline) return null;
+    const combined = (headline + ' ' + body).toLowerCase();
+    if (!IRAN_KW.some(kw => combined.includes(kw))) return null;
+
+    const ts = pubDate ? new Date(pubDate).getTime() : Date.now();
+    if (isNaN(ts) || Date.now() - ts > AUTO_MAX_AGE) return null;
+
+    return {
+      headline,
+      body,
+      source: feed.name,
+      link,
+      ts,
+      category: guessCategory(combined),
+      priority: guessPriority(combined),
+      autoFetched: true,
+    };
+  }).filter(Boolean);
+}
+
+async function fetchAndMergeNews() {
+  setFetchStatus('Lade Nachrichten…', true);
+
+  const results = await Promise.allSettled(AUTO_FEEDS.map(fetchOneFeed));
+  const fetched = results
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value);
+
+  // Veraltete Auto-Meldungen entfernen
+  newsItems = newsItems.filter(n => !n.autoFetched || Date.now() - n.ts < AUTO_MAX_AGE);
+
+  // Duplikate herausfiltern (erste 60 Zeichen der Headline)
+  const seen = new Set(newsItems.map(n => n.headline.toLowerCase().slice(0, 60)));
+  const newItems = fetched.filter(n => !seen.has(n.headline.toLowerCase().slice(0, 60)));
+
+  if (newItems.length > 0) {
+    let maxId = newsItems.length ? Math.max(...newsItems.map(n => n.id)) : 0;
+    newItems.forEach((n, i) => { n.id = maxId + i + 1; newsItems.push(n); });
+    saveNews();
+    render();
+  }
+
+  const t = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  setFetchStatus(newItems.length > 0 ? `+${newItems.length} neu · ${t}` : `Aktuell · ${t}`, false);
+  setTimeout(() => setFetchStatus(''), 12000);
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function init() {
   loadNews();
   render();
   updateClock();
   setInterval(updateClock, 1000);
-  // Refresh relative timestamps every minute
   setInterval(() => renderCards(), 60000);
+  fetchAndMergeNews();
+  setInterval(fetchAndMergeNews, FETCH_EVERY);
 
   // Footer date
   document.getElementById('footerDate').textContent =
