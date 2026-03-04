@@ -444,8 +444,8 @@ const IRAN_KW = [
 ];
 
 const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
-const FETCH_EVERY  = 10 * 60 * 1000;    // alle 10 Minuten
-const AUTO_MAX_AGE = 72 * 3600 * 1000;  // 72 Stunden vorhalten
+const FETCH_EVERY  = 10 * 60 * 1000;   // alle 10 Minuten
+const MAX_AGE      = 24 * 3600 * 1000; // 24 Stunden – ältere News werden gelöscht
 
 function guessCategory(txt) {
   const t = txt.toLowerCase();
@@ -492,7 +492,7 @@ async function fetchOneFeed(feed) {
     if (!IRAN_KW.some(kw => combined.includes(kw))) return null;
 
     const ts = item.pubDate ? new Date(item.pubDate).getTime() : Date.now();
-    if (isNaN(ts) || Date.now() - ts > AUTO_MAX_AGE) return null;
+    if (isNaN(ts) || Date.now() - ts > MAX_AGE) return null;
 
     return {
       headline,
@@ -515,8 +515,8 @@ async function fetchAndMergeNews() {
     .filter(r => r.status === 'fulfilled')
     .flatMap(r => r.value);
 
-  // Veraltete Auto-Meldungen entfernen
-  newsItems = newsItems.filter(n => !n.autoFetched || Date.now() - n.ts < AUTO_MAX_AGE);
+  // Alle Meldungen älter als 24h entfernen
+  newsItems = newsItems.filter(n => Date.now() - n.ts < MAX_AGE);
 
   // Duplikate herausfiltern (erste 60 Zeichen der Headline)
   const seen = new Set(newsItems.map(n => n.headline.toLowerCase().slice(0, 60)));
