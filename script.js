@@ -1,157 +1,6 @@
 'use strict';
 
-// ─── Initial news data (Iran crisis, 2. März 2026) ───────────────────────────
-const INITIAL_NEWS = [
-  {
-    id: 1,
-    headline: '🔴 USA & Israel töten Chamenei – Militäroperation „Epische Wut"',
-    body: 'Am 28. Februar 2026 starteten die USA und Israel die Militäroperation „Epische Wut" gegen den Iran. Dabei wurden Irans Staatsoberhaupt Ajatollah Ali Chamenei sowie zahlreiche hochrangige Sicherheitsoffiziere getötet.',
-    category: 'militär',
-    priority: 'breaking',
-    source: 'Al Jazeera / Euronews',
-    ts: Date.now() - 1000 * 60 * 60 * 22,
-  },
-  {
-    id: 2,
-    headline: 'Trump schließt Einsatz von Bodentruppen gegen Iran nicht mehr aus',
-    body: 'US-Präsident Donald Trump deutete an, er schließe den Einsatz amerikanischer Bodentruppen gegen den Iran nun nicht mehr aus, obwohl Verteidigungsminister Hegseth zuvor erklärt hatte, ein Regimewechsel sei nicht das Ziel.',
-    category: 'militär',
-    priority: 'breaking',
-    source: 't-online',
-    ts: Date.now() - 1000 * 60 * 60 * 18,
-  },
-  {
-    id: 3,
-    headline: 'USA erlangen Kontrolle über iranischen Luftraum',
-    body: 'Laut Berichten haben US-Streitkräfte weitgehend die Kontrolle über den Luftraum des Iran erlangt. Trump drohte gleichzeitig mit einer „großen Welle" weiterer Angriffe.',
-    category: 'militär',
-    priority: 'hoch',
-    source: 't-online',
-    ts: Date.now() - 1000 * 60 * 60 * 16,
-  },
-  {
-    id: 4,
-    headline: 'Iran schlägt mit Raketen & Drohnen gegen Golfstaaten zurück',
-    body: 'Der Iran feuerte ballistische Raketen und Drohnen auf Ziele in den Vereinigten Arabischen Emiraten, Katar, Kuwait und Saudi-Arabien. Getroffen wurden u.a. das Fairmont Hotel in Dubai und der Flughafen Dubai International.',
-    category: 'militär',
-    priority: 'breaking',
-    source: 'Bloomberg / Euronews',
-    ts: Date.now() - 1000 * 60 * 60 * 20,
-  },
-  {
-    id: 5,
-    headline: 'Katar: Luftwaffe schießt zwei iranische Su-24 ab – Energieanlagen getroffen',
-    body: 'Die katarische Luftwaffe gab bekannt, zwei iranische Su-24-Kampfflugzeuge, sieben ballistische Raketen und fünf Drohnen abgefangen zu haben. Dennoch wurden zwei Energieanlagen (Mesaieed Energy & QatarEnergy, Ras Laffan) beschädigt.',
-    category: 'militär',
-    priority: 'hoch',
-    source: 'Bloomberg',
-    ts: Date.now() - 1000 * 60 * 60 * 15,
-  },
-  {
-    id: 6,
-    headline: 'Iran nach Chameneis Tod: Dreiköpfiger Übergangsrat übernimmt Führung',
-    body: 'Nach der Tötung Ajatollah Chameneis soll Iran übergangsweise von einem dreiköpfigen Rat regiert werden, bis der Expertenrat aus 88 Geistlichen einen Nachfolger bestimmt hat.',
-    category: 'politik',
-    priority: 'hoch',
-    source: 'ZDF heute',
-    ts: Date.now() - 1000 * 60 * 60 * 14,
-  },
-  {
-    id: 7,
-    headline: 'Israel kündigt weitere Luftangriffe auf Hisbollah im Libanon an',
-    body: 'Israelische Streitkräfte bestätigten neue Angriffswellen gegen Hisbollah-Positionen im Libanon. Ein hochrangiger Kommandeur der Al-Quds-Brigaden (Islamischer Dschihad) wurde laut Haaretz bei Angriffen in Beirut getötet.',
-    category: 'militär',
-    priority: 'hoch',
-    source: 'Al Jazeera / Haaretz',
-    ts: Date.now() - 1000 * 60 * 60 * 12,
-  },
-  {
-    id: 8,
-    headline: 'EU-Kommission äußert sich „sehr besorgt" – Merz begrüßt Ende des Terrorregimes',
-    body: 'EU-Kommissionspräsidentin von der Leyen und Ratspräsident Costa veröffentlichten eine gemeinsame Erklärung zu den „sehr besorgniserregenden Entwicklungen" im Iran. Bundeskanzler Friedrich Merz zeigte sich am 1. März erleichtert über das „absehbare Ende des Terrorregimes".',
-    category: 'diplomatie',
-    priority: 'normal',
-    source: 'EU-Kommission / ARD',
-    ts: Date.now() - 1000 * 60 * 60 * 10,
-  },
-  {
-    id: 9,
-    headline: 'Ölmärkte unter Druck – Über 450 Flüge in Deutschland gestrichen',
-    body: 'Die Eskalation im Nahen Osten belastet die globalen Ölmärkte deutlich. An den acht größten deutschen Flughäfen wurden bis zum 5. März mehr als 450 Flüge gestrichen – Airlines meiden den nahöstlichen Luftraum.',
-    category: 'wirtschaft',
-    priority: 'hoch',
-    source: 'Bloomberg / dpa',
-    ts: Date.now() - 1000 * 60 * 60 * 8,
-  },
-  {
-    id: 10,
-    headline: 'Analysten warnen vor regionalem Krieg historischen Ausmaßes',
-    body: 'Russische und westliche Analysten sehen ein hohes Eskalationsrisiko für einen regionalen Krieg. Fjodor Lukjanow (Russia in Global Affairs): Trump habe dem Iran faktisch eine „Kriegserklärung bis zum Regimewechsel" gestellt. Humanitäre und ökologische Folgen für die gesamte Golfregion werden als „unkalkulierbar" eingestuft.',
-    category: 'politik',
-    priority: 'hoch',
-    source: 'Pravda DE / CNBC',
-    ts: Date.now() - 1000 * 60 * 60 * 6,
-  },
-  {
-    id: 11,
-    headline: '🔴 Straße von Hormus gesperrt – globale Öl- und Gaslieferungen unterbrochen',
-    body: 'Der Iran hat die Straße von Hormus blockiert. Durch diese strategisch wichtige Meerenge fließen rund 20 % des weltweiten Öl- und Gashandels. Öl- und Gasmärkte reagieren mit massiven Preissteigerungen. Die EU hat einen Energie-Krisenstab einberufen.',
-    category: 'wirtschaft',
-    priority: 'breaking',
-    source: 'CBS News / EU-Kommission',
-    ts: Date.now() - 1000 * 60 * 60 * 5,
-  },
-  {
-    id: 12,
-    headline: 'Chameneis Ehefrau erliegt ihren Verletzungen',
-    body: 'Mansoureh Khojasteh Bagherzadeh (79), Ehefrau des getöteten Ajatollah Chamenei, ist nach Angaben der iranischen Nachrichtenagentur Tasnim ihren Verletzungen erlegen. Bereits beim ersten Angriff wurden Tochter, Schwiegersohn und ein Enkelkind getötet.',
-    category: 'politik',
-    priority: 'hoch',
-    source: 'Tasnim / t-online',
-    ts: Date.now() - 1000 * 60 * 60 * 4,
-  },
-  {
-    id: 13,
-    headline: '🔴 Kuwait schießt versehentlich drei US-amerikanische F-15E ab',
-    body: 'Während iranischer Angriffe schoss Kuwait versehentlich drei US-amerikanische F-15E Strike Eagles ab. US Central Command bestätigte: Alle sechs Piloten konnten sich katapultieren und befinden sich in stabilem Zustand.',
-    category: 'militär',
-    priority: 'breaking',
-    source: 'CBS News / US Central Command',
-    ts: Date.now() - 1000 * 60 * 60 * 3,
-  },
-  {
-    id: 14,
-    headline: 'Vierter US-Soldat gefallen – Trump kündigt Vergeltung an',
-    body: 'Das US-Militär bestätigte den Tod eines vierten amerikanischen Soldaten seit Beginn der Operation. Trump erklärte, er werde die Tode „rächen". Der Präsident rechnet mit weiteren US-Opfern und kündigte an, Angriffe könnten noch vier bis fünf Wochen andauern.',
-    category: 'militär',
-    priority: 'breaking',
-    source: 'NPR / CNBC',
-    ts: Date.now() - 1000 * 60 * 60 * 2,
-  },
-  {
-    id: 15,
-    headline: 'Hisbollah feuert Raketen auf Israel – israelische Gegenschläge im Libanon',
-    body: 'Am 2. März startete die Hisbollah erneut Raketenangriffe auf Israel und brach damit den Waffenstillstand von 2024. Israel antwortete sofort mit Luftangriffen auf Stellungen im Libanon. Der Konflikt weitet sich damit auf eine zweite Front aus.',
-    category: 'militär',
-    priority: 'breaking',
-    source: 'CNN / Al Jazeera',
-    ts: Date.now() - 1000 * 60 * 60 * 1,
-  },
-  {
-    id: 16,
-    headline: 'US-Kongress berät Kriegsvollmachten-Resolution gegen Trump',
-    body: 'Senator Tim Kaine (D-VA) bezeichnete den Angriff auf Iran als „illegalen Krieg" und brachte eine War Powers Resolution ein. Diese würde Trump zwingen, die Militäroperation einzustellen. Ein Veto des Präsidenten gilt als sicher – die Debatte belastet Trumps Rückhalt im Kongress.',
-    category: 'politik',
-    priority: 'hoch',
-    source: 'PBS News / CBS News',
-    ts: Date.now() - 1000 * 60 * 30,
-  },
-];
-
-// ─── State ────────────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'newsticker_iran_2026';
-const STORAGE_VERSION = '3'; // Erhöhen wenn INITIAL_NEWS sich ändert
-const VERSION_KEY = 'newsticker_version';
 let newsItems = [];
 let activeFilter = 'alle';
 let editingId = null;
@@ -159,39 +8,16 @@ let editingId = null;
 // ─── Persistence ─────────────────────────────────────────────────────────────
 function loadNews() {
   try {
-    const storedVersion = localStorage.getItem(VERSION_KEY);
     const stored = localStorage.getItem(STORAGE_KEY);
-
-    if (stored && storedVersion === STORAGE_VERSION) {
-      newsItems = JSON.parse(stored);
-      // Merge in any new INITIAL_NEWS items not yet in storage
-      const storedIds = new Set(newsItems.map(n => n.id));
-      const newItems = INITIAL_NEWS.filter(n => !storedIds.has(n.id));
-      if (newItems.length > 0) {
-        newsItems = newsItems.concat(newItems.map(n => ({ ...n })));
-        saveNews();
-      }
-    } else {
-      // Version veraltet oder kein Eintrag: Nutzer-Meldungen behalten, INITIAL_NEWS neu laden
-      let userItems = [];
-      if (stored && storedVersion !== STORAGE_VERSION) {
-        const oldItems = JSON.parse(stored);
-        const initialIds = new Set(INITIAL_NEWS.map(n => n.id));
-        // Nur manuell hinzugefügte Meldungen (IDs > max INITIAL_NEWS ID) behalten
-        userItems = oldItems.filter(n => !initialIds.has(n.id));
-      }
-      newsItems = [...INITIAL_NEWS.map(n => ({ ...n })), ...userItems];
-      saveNews();
-    }
+    newsItems = stored ? JSON.parse(stored) : [];
   } catch (_) {
-    newsItems = INITIAL_NEWS.map(n => ({ ...n }));
+    newsItems = [];
   }
 }
 
 function saveNews() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newsItems));
-    localStorage.setItem(VERSION_KEY, STORAGE_VERSION);
   } catch (_) { /* quota exceeded – ignore */ }
 }
 
